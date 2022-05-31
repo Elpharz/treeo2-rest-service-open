@@ -1,0 +1,65 @@
+name: Deploy to Develop
+
+on:
+  # Trigger the workflow on push,
+  # but only for the main branch
+  push:
+    branches:
+      - develop
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: treeo-server-develop
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+  DEPLOYMENT_NAME: treeo-server-develop
+  IMAGE: treeo-api-develop
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy to Develop
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |-
+        gcloud --quiet auth configure-docker
+   
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "gcr.io/$PROJECT_ID/$IMAGE:latest" \
+          --label "organization=treeo" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+    # Push the Docker image to Google Container Registry
+    - name: Publish
+      run: |-
+        docker push "gcr.io/$PROJECT_ID/$IMAGE:latest"
+    
+    - name: Print name of image
+      run: |-
+        echo "  [+]  Image created => $IMAGE:$GITHUB_SHA"
+
+    - name: deploy to treeo test dev environment
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.TREEO_DEV_HOST }}
+        username: ${{ secrets.TREEO_DEV_USERNAME }}
+        password: ${{ secrets.TREEO_DEV_PASSWORD }}
+        port: ${{ secrets.TREEO_DEV_PORT }}
+        script: |
+          cd /home/daniel_lwetabe/treeo2-rest-service/
+          git checkout develop
+          git pull origin develop
+          ./deploy.sh latest

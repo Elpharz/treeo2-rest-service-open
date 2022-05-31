@@ -1,0 +1,173 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ActivityTemplateType {
+  activityType: String!
+  code: Float!
+  configuration: String
+  post_questionnaireID: QuestionaireType!
+  pre_questionnaireID: QuestionaireType!
+  projectID: ProjectType!
+  questionnaire: QuestionaireType!
+}
+
+type ActivityType {
+  activityTemplate: ActivityTemplateType!
+  activityTemplateID: String!
+  comment: String
+  commentAudio: String
+  deviceInformationID: String!
+  endDate: String!
+  fullyCompleted: Boolean!
+  id: String!
+  labels: String
+  measurement: String!
+  mobileAppVersion: String!
+  outsidePolygon: String
+  perfomedBy: UserType!
+  plot: PlotType
+  plotID: Float
+  postQuestionnaireData: String!
+  postQuestionnaireID: Float!
+  preQuestionnaireData: String!
+  preQuestionnaireID: Float!
+  restarted: Float!
+  startDate: String!
+  synced: String!
+  totalSteps: Float
+  userID: UserType!
+}
+
+type DeviceType {
+  advertisingID: String
+  androidVersion: String!
+  cameraInformation: String
+  freeRAM: String!
+  id: Float!
+  installedApps: String
+  manufacturer: String!
+  model: String!
+  screenResolution: String
+  sensors: String
+  totalCardStorage: String
+  totalInternalStorage: String!
+  totalRAM: String!
+  userID: UserType!
+  users: UserType!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type OrganizationType {
+  code: Int
+  country: String!
+  id: Int!
+  name: String!
+  projects: [ProjectType!]
+  roles: [RoleType!]
+  users: [UserType!]
+}
+
+type PlannedActivityType {
+  activityID: ActivityType!
+  activityTemplate: ActivityTemplateType
+  activityTemplateID: Float!
+  completedByActivity: ActivityType!
+  description: String!
+  dueDate: String!
+  plot: PlotType!
+  plotID: PlotType!
+  title: String!
+  user: UserType!
+  userID: UserType!
+}
+
+type PlotType {
+  area: Int
+  externalId: String!
+  id: Int!
+  name: String!
+  organization: OrganizationType!
+  organizationID: Int!
+  owner: UserType!
+  ownerID: UserType!
+  polygon: JSON
+  projectStatus: String
+}
+
+type ProjectType {
+  id: Int!
+  name: String
+  organization: OrganizationType!
+  organizationID: Int!
+  projectStatus: String
+}
+
+type Query {
+  activities: [ActivityType!]!
+  filterUsers(email: String, firstName: String, lastName: String, status: String): [UserType!]!
+  getActivityById(id: String!): ActivityType!
+  getAllPlots: [PlotType!]!
+  getOrganizationById(id: Int!): OrganizationType!
+  getProjectById(id: Int!): ProjectType!
+  getRoleById(id: Int!): RoleType!
+  getRoleByName(name: String!): RoleType!
+  getUserById(id: Int!): UserType!
+  organizations: [OrganizationType!]!
+  projects: [ProjectType!]!
+  roles: [RoleType!]!
+  searchUserProjects(key: String!): [UserProjectType!]!
+  searchUsers(key: String!): [UserType!]!
+  users: [UserType!]!
+}
+
+type QuestionaireType {
+  configuration: String!
+  projectID: ProjectType!
+}
+
+type RoleType {
+  code: Int
+  id: Int!
+  name: String!
+  operation: String
+  organization: OrganizationType
+  organizationID: Int!
+  users: [UserType!]
+}
+
+type UserProjectType {
+  project: ProjectType
+  projectID: Float
+  role: RoleType
+  roleID: RoleType!
+  user: UserType!
+  userID: UserType!
+  valid_from: String
+  valid_to: String
+}
+
+type UserType {
+  country: String
+  devices: DeviceType!
+  email: String
+  firstName: String!
+  gdprAccepted: Boolean!
+  id: Int!
+  isActive: Boolean
+  lastName: String!
+  password: String
+  phoneNumber: String
+  plannedActivites: PlannedActivityType!
+  plot: PlotType!
+  preferedLogin: String
+  preferences: String
+  refreshToken: String
+  status: String
+  userProject: [UserProjectType!]
+  username: String
+}

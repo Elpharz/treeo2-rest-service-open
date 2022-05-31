@@ -1,0 +1,90 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      NEST_SECRET: wertyuio__XXX
+      NEST_REFRESH_SECRET: e567ujn5367____XXX___
+      DB_DIALECT: postgres
+      DB_USER: postgres
+      DB_PORT: 5438
+      DB_PASS: sOmE_sEcUrE_pAsS
+      NODE_ENV: development
+      DB_DATABASE: postgres
+      DB_HOST: localhost
+      DB_TEST: test
+      TEST_USER_PASS: ${{ secrets.TESTING_PASS }}
+      VALIDATE_MEASUREMENT: http://localhost:9182/push
+      SALT_ROUNDS: ${{ secrets.SALT_ROUNDS }}
+      SPLIT_AUTH_KEY: ${{ secrets.SPLIT_AUTH_KEY }}
+      PORT: ${{ secrets.E2E_PORT }}
+      TWILIO_SID: ${{ secrets.TWILIO_SID }}
+      TWILIO_AUTH_TOKEN: ${{secrets.TWILIO_AUTH_TOKEN }}
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_SERVER: ${{ secrets.SENDGRID_SERVER }}
+      SENDGRID_SECURE_PORT: ${{ secrets.SENDGRID_SECURE_PORT }}
+      SENDGRID_INSECURE_PORT: ${{ secrets.SENDGRID_INSECURE_PORT }}
+      SENDGRID_USERNAME: ${{ secrets.SENDGRID_USERNAME }}
+      SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+      TWILIO_NUMBER: ${{ secrets.TWILIO_NUMBER }}
+      TWILIO_VERIFY: ${{ secrets.TWILIO_VERIFY }}
+      TWILIO_VERIFY_CHANNEL: ${{ secrets.TWILIO_VERIFY_CHANNEL }}
+    strategy:
+      matrix:
+        node-version: [ 14.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+ 
+    services:
+      postgres:
+        image: mdillon/postgis:11-alpine
+        env:
+          POSTGRES_USER: ${{ env.DB_USER}}
+          POSTGRES_PASSWORD: ${{ env.DB_PASS }}
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5438:5432
+
+      redis:
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+      consumer:
+        image: gcr.io/treeo-dev/consumer:v1
+        
+      producer:
+        image: gcr.io/treeo-dev/producer:v1
+        ports:
+          - 9182:9012
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install --save --legacy-peer-deps
+    - run: npm run build --if-present
+    - run: npm test
+    # need to fix
+    - run: npm run test:actions

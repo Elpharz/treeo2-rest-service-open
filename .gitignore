@@ -1,0 +1,60 @@
+# compiled output
+dist
+node_modules
+*.dump
+
+# Logs
+Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+#environment
+*.env
+redis-data/
+coverage-e2e/
+
+#k8s
+k8s/develop/service.yaml
+k8s/develop/secret.yaml
+k8s/develop/postgres-service.yaml
+k8s/develop/redis-service.yaml
+k8s/develop/volume.yaml
+k8s/develop/volume-claim.yaml
+
+#key file
+treeo2_test_*
+
+#upload folder
+uploads/
+
+#sequelize
+sequelizeMeta.json
+service_account.json
+*venv

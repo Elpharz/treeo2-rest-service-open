@@ -1,0 +1,46 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "treeo-server-develop"
+  namespace: "default"
+  labels:
+    app: "treeo-server-develop"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "treeo-server-develop"
+  template:
+    metadata:
+      labels:
+        app: "treeo-server-develop"
+    spec:
+      containers:
+      - name: "treeo-server-develop"
+        image: "gcr.io/treeo-dev/treeo-server-develop:latest"
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: user
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: password
+              key: DB_PASSWORD
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: DB_DATABASE
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: port
+              key: DB_PORT
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: host
+              key: DB_HOST

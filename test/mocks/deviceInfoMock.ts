@@ -1,0 +1,15 @@
+export const fakeDeviceInfo = {
+  manufacturer: 'ghgfdshgfha',
+  model: 'ghgfdshgfha',
+  androidVersion: '1.0.0',
+  totalRAM: '4gb',
+  freeRAM: '1.4gb',
+  card: 'ghgfdshgfha',
+  storage: '36gb',
+  sensors: ['light senser', 'noise senser'],
+  installedApps: ['facebook', 'whatsapp'],
+  advertisingID: '85775ftth',
+  screenResolution: '1086',
+  cameraInformation: 'sghjGGDSDF',
+  userID: 1,
+};

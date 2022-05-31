@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  uploader:
+    restart: always
+    build: .
+    ports:
+      - "9005:9005"
+    env_file: .env
+ 
